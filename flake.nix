@@ -42,7 +42,7 @@
       blinkstick-python-env = pkgs.python3.withPackages (ps: [ pkgs.python3Packages.BlinkStick ]);
 
       blinkstick-scripts-allWhite = pkgs.writeShellScriptBin "blinkstick-scripts-allWhite" ''
-        #!${pkgs.python3.interpreter}
+        #!/usr/bin/env python3
         from blinkstick import blinkstick
 
         bstick = blinkstick.find_first()
@@ -58,7 +58,7 @@
       '';
 
       blinkstick-scripts-allOff = pkgs.writeShellScriptBin "blinkstick-scripts-allOff" ''
-        #!${pkgs.python3.interpreter}
+        #!/usr/bin/env python3
         from blinkstick import blinkstick
 
         bstick = blinkstick.find_first()
