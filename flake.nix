@@ -39,7 +39,9 @@
         ];
       };
 
-      blinkstick-scripts-allWhite = pkgs.writeScriptBin "blinkstick-scripts-allWhite" ''
+      blinkstick-python-env = pkgs.python3.withPackages (ps: [ pkgs.python3Packages.BlinkStick ]);
+
+      blinkstick-scripts-allWhite = pkgs.writeShellScriptBin "blinkstick-scripts-allWhite" ''
         #!${pkgs.python3.interpreter}
         from blinkstick import blinkstick
 
@@ -55,7 +57,7 @@
             print("No BlinkSticks found...")
       '';
 
-      blinkstick-scripts-allOff = pkgs.writeScriptBin "blinkstick-scripts-allOff" ''
+      blinkstick-scripts-allOff = pkgs.writeShellScriptBin "blinkstick-scripts-allOff" ''
         #!${pkgs.python3.interpreter}
         from blinkstick import blinkstick
 
@@ -71,17 +73,14 @@
             print("No BlinkSticks found...")
       '';
 
-      scriptEnv = pkgs.python3.withPackages (ps: [ pkgs.python3Packages.BlinkStick ]);
-
     in {
       devShells.default = pkgs.mkShell {
         packages = [ pkgs.bashInteractive pkgs.python3 pkgs.python3Packages.BlinkStick ];
       };
 
       packages = { 
-        blinkstick-scripts-allWhite = blinkstick-scripts-allWhite.overrideAttrs (old: { path = [ scriptEnv ]; });
-        blinkstick-scripts-allOff = blinkstick-scripts-allOff.overrideAttrs (old: { path = [ scriptEnv ]; });
+        blinkstick-scripts-allWhite = blinkstick-scripts-allWhite.overrideAttrs (old: { buildInputs = [ blinkstick-python-env ]; });
+        blinkstick-scripts-allOff = blinkstick-scripts-allOff.overrideAttrs (old: { buildInputs = [ blinkstick-python-env ]; });
       };
     });
 }
-
