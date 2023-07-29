@@ -1,6 +1,6 @@
 {
-  description = "blinkstick white/off scripts";
-  
+  description = "blinkstick white/off script";
+
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
@@ -41,37 +41,30 @@
 
       blinkstick-python-env = pkgs.python3.withPackages (ps: [ pkgs.python3Packages.BlinkStick ]);
 
-      blinkstick-scripts-allWhite = pkgs.writeShellScriptBin "blinkstick-scripts-allWhite" ''
-        #!/usr/bin/env python3
+      blinkstick-scripts = pkgs.writeScriptBin "blinkstick-scripts" ''
+        #!${blinkstick-python-env.interpreter}
         from blinkstick import blinkstick
+        import sys
 
         bstick = blinkstick.find_first()
 
         if bstick is not None:
             num_leds = bstick.get_led_count()
 
-            led_data = [255, 255, 255] * num_leds  # RGB for white
+            if sys.argv[1] == 'allWhite':
+                led_data = [255, 255, 255] * num_leds  # RGB for white
+            elif sys.argv[1] == 'allOff':
+                led_data = [0, 0, 0] * num_leds  # RGB for black (off)
+            else:
+                print("Invalid argument")
+                sys.exit(1)
 
             bstick.set_led_data(0, led_data)
         else:
             print("No BlinkSticks found...")
-      '';
+      ''; 
 
-      blinkstick-scripts-allOff = pkgs.writeShellScriptBin "blinkstick-scripts-allOff" ''
-        #!/usr/bin/env python3
-        from blinkstick import blinkstick
-
-        bstick = blinkstick.find_first()
-
-        if bstick is not None:
-            num_leds = bstick.get_led_count()
-
-            led_data = [0, 0, 0] * num_leds  # RGB for black (off)
-
-            bstick.set_led_data(0, led_data)
-        else:
-            print("No BlinkSticks found...")
-      '';
+      scriptEnv = pkgs.python3.withPackages (ps: [ pkgs.python3Packages.BlinkStick ]);
 
     in {
       devShells.default = pkgs.mkShell {
@@ -79,8 +72,7 @@
       };
 
       packages = { 
-        blinkstick-scripts-allWhite = blinkstick-scripts-allWhite.overrideAttrs (old: { buildInputs = [ blinkstick-python-env ]; });
-        blinkstick-scripts-allOff = blinkstick-scripts-allOff.overrideAttrs (old: { buildInputs = [ blinkstick-python-env ]; });
+        blinkstick-scripts = blinkstick-scripts.overrideAttrs (old: { path = [ scriptEnv ]; });
       };
     });
 }
