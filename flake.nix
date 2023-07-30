@@ -1,5 +1,5 @@
 {
-  description = "blinkstick white/off script";
+  description = "script for interacting with my blinkstick flex";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -13,7 +13,7 @@
             python3Packages = super.python3Packages // {
               BlinkStick = pkgs.python3Packages.buildPythonPackage rec {
                 pname = "blinkstick";
-                version = "1.2.1"; 
+                version = "1.2.0"; 
 
                 src = pkgs.fetchFromGitHub {
                   owner = "arvydas";
@@ -51,10 +51,14 @@
         if bstick is not None:
             num_leds = bstick.get_led_count()
 
-            if sys.argv[1] == 'allWhite':
-                led_data = [255, 255, 255] * num_leds  # RGB for white
-            elif sys.argv[1] == 'allOff':
-                led_data = [0, 0, 0] * num_leds  # RGB for black (off)
+            if sys.argv[1] == 'white':
+                led_data = [255, 255, 255] * num_leds  
+            elif sys.argv[1] == 'off':
+                led_data = [0, 0, 0] * num_leds  
+            elif sys.argv[1] == 'red':
+                led_data = [0, 255, 0] * num_leds  
+            elif sys.argv[1] == 'pink':
+                led_data = [105, 255, 180] * num_leds  
             else:
                 print("Invalid argument")
                 sys.exit(1)
