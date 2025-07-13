@@ -51,7 +51,7 @@
 
       blinkstick-scripts = pkgs.writeScriptBin "blinkstick-scripts" ''
         #!${blinkstick-python-env.interpreter}
-        from blinkstick import blinkstick
+        from blinkstick import BlinkStick
         import sys
 
         bstick = blinkstick.find_first()
