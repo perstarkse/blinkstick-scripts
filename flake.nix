@@ -19,27 +19,25 @@
               // {
                 BlinkStick = pkgs.python3Packages.buildPythonPackage rec {
                   pname = "blinkstick";
-                  version = "2.0-dev";
+                  version = "1.2.0";
 
                   src = pkgs.fetchFromGitHub {
                     owner = "arvydas";
                     repo = "blinkstick-python";
-                    rev = "95811252bc4129ee235dba3176be6987a0152c92";
-                    sha256 = "sha256-t+xn1zagpitxFxoybQK1uat2qFsggtye/OVrzZuWcX4=";
+                    rev = "8140b9fa18a9ff4f0e9df8e70c073f41cb8f1d35";
+                    sha256 = "02qfjvbinjid1hp5chi5ms3wpvfkbphnl2rcvdwwz5f87x63pdzm";
                   };
 
                   propagatedBuildInputs = [pkgs.python3Packages.pyusb];
 
-                  pyproject = true;
-                  build-system = [pkgs.python3Packages.setuptools pkgs.python3Packages.setuptools-scm];
                   doCheck = false;
                   pythonImportsCheck = ["blinkstick"];
 
                   meta = with pkgs.lib; {
                     description = "Python package to control BlinkStick USB devices";
                     homepage = "https://github.com/arvydas/blinkstick-python";
-                    license = licenses.bsd3;
-                    maintainers = with maintainers; [np];
+                    license = pkgs.lib.licenses.bsd3;
+                    maintainers = with pkgs.lib.maintainers; [np];
                   };
                 };
               };
@@ -51,13 +49,14 @@
 
       blinkstick-scripts = pkgs.writeScriptBin "blinkstick-scripts" ''
         #!${blinkstick-python-env.interpreter}
-        from blinkstick import BlinkStick
+        from blinkstick import blinkstick
         import sys
 
-        bstick = BlinkStick.find_first()
+        bstick = blinkstick.find_first()
 
         if bstick is not None:
             num_leds = bstick.get_led_count()
+            print(num_leds)
 
             if sys.argv[1] == 'white':
                 led_data = [255, 255, 255] * num_leds
