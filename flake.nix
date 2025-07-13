@@ -54,7 +54,7 @@
         from blinkstick import BlinkStick
         import sys
 
-        bstick = blinkstick.find_first()
+        bstick = BlinkStick.find_first()
 
         if bstick is not None:
             num_leds = bstick.get_led_count()
